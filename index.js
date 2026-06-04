@@ -254,8 +254,20 @@ async function refreshBalance() {
 async function fetchTopSymbols() {
   try {
     log('INFO', 'Fetching top symbols...');
-    const tickers = await binancePublic('/api/v3/ticker/24hr');
-    const tickerArray = Array.isArray(tickers) ? tickers : [];
+    const raw = await binancePublic('/api/v3/ticker/24hr');
+    // Handle both array and object responses from Binance
+    let tickerArray = [];
+    if (Array.isArray(raw)) tickerArray = raw;
+    else if (raw && typeof raw === 'object') tickerArray = Object.values(raw);
+    log('INFO', 'Ticker response type: ' + typeof raw + ' length: ' + tickerArray.length);
+    if (tickerArray.length === 0) {
+      // Fallback: use default top coins if ticker fetch fails
+      dynamicSymbols = ['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT','DOGEUSDT','ADAUSDT','MATICUSDT','DOTUSDT','LINKUSDT','AVAXUSDT','UNIUSDT','ATOMUSDT','LTCUSDT','ETCUSDT','XLMUSDT','ALGOUSDT','VETUSDT','FILUSDT','TRXUSDT'];
+      botState.symbolsLoaded = dynamicSymbols.length;
+      botState.topPreScreened = dynamicSymbols.slice(0,10);
+      log('INFO', 'Using fallback symbols: ' + dynamicSymbols.length + ' coins');
+      return;
+    }
     const valid = tickerArray
       .filter(t =>
         t.symbol.endsWith('USDT') &&
