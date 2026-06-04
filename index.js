@@ -255,7 +255,8 @@ async function fetchTopSymbols() {
   try {
     log('INFO', 'Fetching top symbols...');
     const tickers = await binancePublic('/api/v3/ticker/24hr');
-    const valid = tickers
+    const tickerArray = Array.isArray(tickers) ? tickers : [];
+    const valid = tickerArray
       .filter(t =>
         t.symbol.endsWith('USDT') &&
         !['DOWN','UP','BEAR','BULL','TUSD','USDC','BUSD','DAI','FDUSD'].some(x=>t.symbol.includes(x)) &&
