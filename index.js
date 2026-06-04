@@ -20,8 +20,8 @@ const CONFIG = {
   TRAIL_PCT: 1.0,
 
   // Binance WebSocket endpoints
-  WS_BASE:  'wss://stream.binance.com:9443',
-  REST_BASE: 'https://api.binance.com',
+  WS_BASE:  'wss://stream.binance.com:443',
+  REST_BASE: 'https://api1.binance.com',
 
   // Analysis settings
   // We still fetch klines for multi-TF analysis but only when a coin
@@ -69,7 +69,7 @@ const CONFIG = {
   DRAWDOWN_PAUSE_PCT: 3,
 };
 
-const BASE = CONFIG.REST_BASE;
+const BASE = process.env.BINANCE_BASE || 'https://api1.binance.com';
 if (!global.stepSizeCache) global.stepSizeCache = {};
 
 // ─── State ────────────────────────────────────────────────────────────────────
